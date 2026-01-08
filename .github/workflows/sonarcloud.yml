@@ -10,17 +10,15 @@ permissions:
   pull-requests: read
 
 jobs:
-  build-and-analyze:
+  sonarcloud:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Setup Java 25
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
@@ -28,20 +26,19 @@ jobs:
           java-version: '25'
           cache: gradle
 
-      # 3. Build + Tests + JaCoCo
-      - name: Build, Test and Generate JaCoCo Report
-        run: |
-          chmod +x gradlew
-          ./gradlew clean test jacocoTestReport
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
 
-      # 4. SonarCloud analysis + Quality Gate
-      - name: SonarCloud Scan & Quality Gate
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=Merkato-co_backend-core
-            -Dsonar.organization=merkato-co
-            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
-            -Dsonar.qualitygate.wait=true
+      - name: Build, test and generate reports
+        run: ./gradlew clean test jacocoTestReport
+
+      - name: SonarCloud analysis
+        run: ./gradlew sonarqube \
+          -Dsonar.projectKey=Merkato-co_backend-core \
+          -Dsonar.organization=merkato-co \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml \
+          -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
