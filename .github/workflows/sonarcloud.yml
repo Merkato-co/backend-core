@@ -32,21 +32,14 @@ jobs:
       - name: Build and test
         run: ./gradlew clean test jacocoTestReport
 
-      # 4. SonarCloud analysis
-      - name: SonarCloud analysis
+      # 4. SonarCloud analysis + Quality Gate
+      - name: SonarCloud Scan & Quality Gate
         uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.projectKey=Merkato-co_backend-core
             -Dsonar.organization=merkato-co
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
-
-      # 5. Quality Gate
-      - name: SonarCloud Quality Gate
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          projectBaseDir: .
+            -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
