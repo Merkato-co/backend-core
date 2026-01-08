@@ -28,6 +28,7 @@ jobs:
           java-version: '25'
           cache: gradle
 
+      # 3. Build + Tests + JaCoCo
       - name: Build, Test and Generate JaCoCo Report
         run: |
           chmod +x gradlew
