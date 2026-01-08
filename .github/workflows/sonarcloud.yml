@@ -45,7 +45,8 @@ jobs:
 
       # 5. Quality Gate
       - name: SonarCloud Quality Gate
-        uses: SonarSource/sonarcloud-quality-gate-action@v1
-        timeout-minutes: 5
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
