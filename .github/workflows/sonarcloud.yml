@@ -28,9 +28,10 @@ jobs:
           java-version: '25'
           cache: gradle
 
-      # 3. Build + Tests + JaCoCo
-      - name: Build and test
-        run: ./gradlew clean test jacocoTestReport
+      - name: Build, Test and Generate JaCoCo Report
+        run: |
+          chmod +x gradlew
+          ./gradlew clean test jacocoTestReport
 
       # 4. SonarCloud analysis + Quality Gate
       - name: SonarCloud Scan & Quality Gate
