@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: backend-core
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/changelog-master.yaml
+
+---
+
+# Vault integration
+spring:
+  cloud:
+    vault:
+      uri: http://localhost:8200
+      token: root
+      kv:
+        enabled: true
+        backend: secret
+        application-name: apps/backend-core
+        default-context: databases/merkato
+  config:
+    import: vault://
